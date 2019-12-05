@@ -362,7 +362,9 @@ public class FederalistsGUI extends javax.swing.JFrame{
 
                     pack();
     }
-
+    /*
+     * allows user to select a the path and indexes displays message to user when complete
+     */
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         if (directoryChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
@@ -383,10 +385,10 @@ public class FederalistsGUI extends javax.swing.JFrame{
     }
     
     /**
-     * Updates the table with the file list passed in and update the label
+     * Updates files to display
      * @param table the table to update
-     * @param files arraylist of integers containing the files
-     * @param label add the number of documents found
+     * @param files arraylist of ints that holds the files
+     * @param label shows the docs that were found
      */
     private void displayFiles(JTable table, ArrayList<Integer> files, JLabel label) {
         String columnNames[] = new String[] {"Papers"};
@@ -401,7 +403,9 @@ public class FederalistsGUI extends javax.swing.JFrame{
         
         label.setText("Documents found: " + files.size());
     }
-    
+    /*
+     * gives user to open an existing index that has already been written to disk
+     */
     private void openExistingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         if (directoryChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
@@ -703,14 +707,7 @@ public class FederalistsGUI extends javax.swing.JFrame{
     
     
     /**
-     * Calculate the mutual information score by calculating N11, 
-     * N10, N01, and N00 for each class for the term
-     *      N11 = # of docs in the class and contains the term
-     *      N10 = # of docs that contain the term, but not in the class
-     *      N01 = # of docs that are in the class, but do not contain the term
-     *      N00 = # of docs that are not in the class and do not contain the term
-     * @param postings positional postings for a term
-     * @param index the index where the term is located in the term list
+     *Calculates mutual scores using postings, and int index for each father
      */
     private void calculateMutualInfoScores(ArrayList<Posting> postings, int index) {
         int jN11 = 0, hN11 = 0, mN11 = 0;
@@ -770,11 +767,6 @@ public class FederalistsGUI extends javax.swing.JFrame{
     
     /**
      * Calculate the mutual information score based on the I(t,c) formula
-     * @param N11 # of docs in the class and contains the term
-     * @param N01 # of docs that are in the class, but do not contain the term
-     * @param N10 # of docs that contain the term, but not in the class
-     * @param N00 # of docs that are not in the class and do not contain the term
-     * @return 
      */
     private double calculateItc(double N11, double N01, double N10, double N00) {
         double N = (double)dindex.getDocumentCount();
@@ -808,8 +800,7 @@ public class FederalistsGUI extends javax.swing.JFrame{
     }
     
     /**
-     * Get the max score between the three classes
-     * @param size the number of terms in the index
+     * Get the max score of the 3 classes
      */
     private void getEvidenceVector(int size) {
         double[] jScores = jDocs.getItc();
@@ -838,8 +829,7 @@ public class FederalistsGUI extends javax.swing.JFrame{
     }
     
     /**
-     * Selects the term from the evidence array that scored higher than .171 (50 terms) and
-     * adds it to the evidenceTerms list
+     * Selects the 50 terms for evidence to use
      */
     private void selectEvidence() {
         evidenceTerms = new ArrayList<>();
