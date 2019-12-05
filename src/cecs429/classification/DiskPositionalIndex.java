@@ -314,7 +314,7 @@ public class DiskPositionalIndex {
                 
                 buffer = new byte[termLength];
                 vocabFile.read(buffer, 0, termLength);
-                terms.add(new String(buffer, "ASCII"));
+                terms.add(new String(buffer, "UTF-8"));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -324,7 +324,7 @@ public class DiskPositionalIndex {
     }
     
     /**
-     * eturn doc weight based on doc id
+     * return doc weight based on doc id
      * @param docID the document id
      * @param docWeightsFile the document weights file
      * @param offset the offset to seek by

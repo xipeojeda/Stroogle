@@ -209,6 +209,7 @@ public class DiskIndexWriter {
 				updateTermFreqMap(term, termFreqMap);
 				position++;
 			}
+			
 		}
 		buildWeight(mainDirectory, termFreqMap, file.length());
     }

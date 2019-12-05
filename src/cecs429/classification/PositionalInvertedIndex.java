@@ -18,14 +18,14 @@ public class PositionalInvertedIndex {
 		//if maps contains the term
 		if(!map.containsKey(term)) {
 			List<Posting> postings = new ArrayList<>();
-			postings.add(new Posting(docID, position));
+			postings.add(createPosting(docID, position));
 			map.put(term, postings);
 		}
 		else {
 			//if terms docID is not at last posting in the last add that position
 			List<Posting> postings = map.get(term);
 			if(postings.get(postings.size() - 1).getDocumentID() != docID) {
-				postings.add(new Posting(docID, position));
+				postings.add(createPosting(docID, position));
 				map.replace(term, postings);
 			}
 			//if not, add the position of last term
@@ -41,10 +41,7 @@ public class PositionalInvertedIndex {
 	}
 	
 	public List<Posting> getPosting(String term){
-		if(map.containsKey(term))
-			return map.get(term);
-		else
-			return new ArrayList<>();
+		return map.get(term);
 	}
 	/*
 	 *  Gets vocabulary of positional inverted index
@@ -62,4 +59,23 @@ public class PositionalInvertedIndex {
 	public int getTermCount() {
 		return map.size();
 	}
+	
+    /**
+     * Creates a new PositionalPosting object
+     * @param docID the document id to be added to the list
+     * @param position the position of the term
+     * @return 
+     */
+    private Posting createPosting(int docID, int position) {
+        // create a new position list
+        ArrayList<Integer> posList = new ArrayList<>();
+        // add the position to the list
+        posList.add(position);
+        // create a new positional posting for the new document
+        Posting pospost = new Posting(docID, posList.size(),
+                posList);
+        
+        return pospost;
+    }
+    
 }

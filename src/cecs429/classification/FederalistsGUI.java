@@ -7,8 +7,14 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -460,8 +466,7 @@ public class FederalistsGUI extends javax.swing.JFrame{
                         jDocList.add(doc);
                     }
                 }
-            }
-            
+            }           
             JOptionPane.showMessageDialog(this, results, "Rocchio Maury Show", JOptionPane.INFORMATION_MESSAGE);
             displayFiles(hamiltonTable, hDocList, hamiltonFileLabel);
             displayFiles(madisonTable, mDocList, madisonFileLabel);
@@ -487,8 +492,8 @@ public class FederalistsGUI extends javax.swing.JFrame{
             
             //calculatations methods
             getMutualInfoScores();
-            getEvidenceVector(termCount);
-            selectEvidence(0.15);
+            getEvidenceVector(50);
+            selectEvidence();
             getFrequencyTerms();
             trainBayesianClassifier();
             
@@ -605,9 +610,9 @@ public class FederalistsGUI extends javax.swing.JFrame{
     private void initializeDocumentVectors() {
         documentVectors = new HashMap<>(dindex.getDocumentCount());
         ArrayList<String> terms = dindex.getPositionalIndexTerms();
-        
-        for(int i = 0; i < terms.size(); i++) {
-            List<Posting> postings = dindex.getPostings(terms.get(i), true);
+        int i = 0;
+        for(String s: terms) {
+            List<Posting> postings = dindex.getPostings(s, true);
             
             for(Posting posting : postings) {
                 double ld = dindex.getDocWeight(posting.getDocumentID());
@@ -621,15 +626,28 @@ public class FederalistsGUI extends javax.swing.JFrame{
                     wdts = new double[terms.size()];
                 }
                 //added 1 because of 0 values THIS IS NOT THE CORRECT DID THIS FOR TESTING
-                double tftd = posting.getPositions().size() + 1;
-               //.out.println("tftf"+tftd); //occasionally get 0's
+                double tftd = posting.getPositions().size();
+                if(tftd == 0) {
+                	break;
+                }
+               
                 double wdt = 1 + Math.log(tftd);//which gives us oof numbers
                // System.out.println("wdt"+wdt);
                 wdts[i] = wdt / ld;
                 documentVectors.put(posting.getDocumentID(), wdts);
                
             }
+            i++;
         }
+        /*prints terms from paper_52.txt
+       for(String s: terms) {
+    	   ArrayList<Posting> postings = dindex.getPostings(s, true);
+    	   for(Posting p: postings) {
+    		   if(p.getDocumentID() == 74) {
+    			   System.out.println(s);
+    		   }
+    	   }
+       }*/
     }
     
     /**
@@ -820,18 +838,19 @@ public class FederalistsGUI extends javax.swing.JFrame{
     }
     
     /**
-     * Selects the term from the evidence array that scored higher than .25 and
+     * Selects the term from the evidence array that scored higher than .171 (50 terms) and
      * adds it to the evidenceTerms list
      */
-    private void selectEvidence(double value) {
+    private void selectEvidence() {
         evidenceTerms = new ArrayList<>();
         ArrayList<String> terms = dindex.getPositionalIndexTerms();
         
         for(int i = 0; i < evidence.length; i++) {
-            if(evidence[i] > value) {
-                evidenceTerms.add(terms.get(i));
-            }
-        }
+           //if(evidence[i] > value) to get highest scores
+        		evidenceTerms.add(terms.get(i));
+                
+              
+        }  
     }
     
     /**
